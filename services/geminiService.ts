@@ -1,10 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get a fresh instance, ensuring the latest API key is used
+const getAi = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const askOracle = async (question: string): Promise<string> => {
   try {
+    const ai = getAi();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: question,
