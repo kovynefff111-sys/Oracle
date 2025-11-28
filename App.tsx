@@ -1,7 +1,73 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import StarBackground from './components/StarBackground';
 import OracleModal from './components/OracleModal';
 import { Eye, Shield, Sparkles, Compass, Phone, Send, Menu, X, MessageCircle, Star, ChevronDown } from 'lucide-react';
+
+// Static data moved outside component for performance
+const NAV_LINKS = [
+  { name: 'Обо мне', href: '#about' },
+  { name: 'Практики', href: '#practices' },
+  { name: 'Преимущества', href: '#benefits' },
+  { name: 'Отзывы', href: '#reviews' },
+  { name: 'Заказать расклад', href: '#contact' },
+];
+
+const SERVICES_LIST = [
+  "Расклады Таро",
+  "Руническая Магия",
+  "Астрология",
+  "Обряды и Ритуалы",
+  "Другой вопрос"
+];
+
+const REVIEWS = [
+  {
+    name: "Ольга К.",
+    text: "Заказывала расклад на любовную сферу, отношения были в тупике. Мастер не просто предсказал развитие событий, а показал корень проблемы во мне. Это было жестко, но честно. Спустя месяц все наладилось именно так, как говорили карты.",
+  },
+  {
+    name: "Алексей М.",
+    text: "Стоял на перепутье в бизнесе, риск был огромен. Руническая диагностика дала четкое понимание вектора движения. Сделка прошла успешно, благодарю за ясность ума и своевременную подсказку!",
+  },
+  {
+    name: "Елена В.",
+    text: "Астрологический разбор открыл глаза на мои кармические задачи. Я годами наступала на одни и те же грабли. Теперь у меня есть 'карта' моей жизни. Очень глубокий и профессиональный подход.",
+  },
+  {
+    name: "Мария С.",
+    text: "Невероятная энергетика! После сеанса вышла с легким сердцем. Все страхи и сомнения ушли, появилась уверенность в завтрашнем дне. Спасибо за тепло, мудрость и поддержку в трудную минуту.",
+  }
+];
+
+const BENEFITS = [
+  { icon: Eye, title: 'Ясность', text: 'Говорю четко и по существу. Без воды, мистического тумана и размытых фраз. Только факты расклада.' },
+  { icon: Shield, title: 'Тайна', text: 'Всё, что происходит на сеансе, остается между нами. Это главное правило моей этики.' },
+  { icon: Sparkles, title: 'Экология', text: 'Работаю безопасно для вашей кармы. Никакого подавления воли и черных ритуалов.' },
+  { icon: Compass, title: 'Результат', text: 'Цель консультации — не напугать, а дать инструменты для решения проблемы здесь и сейчас.' }
+];
+
+const PRACTICES = [
+  {
+    title: 'Руническая Магия',
+    desc: 'Диагностика на Старшем Футарке. Создание индивидуальных ставов и амулетов для защиты, привлечения удачи и коррекции судьбы.',
+    img: 'https://xland.by/image/catalog/product_8593_0_image.jpg'
+  },
+  {
+    title: 'Расклады Таро',
+    desc: 'Зеркало вашего подсознания. Разбор отношений, анализ карьерных перспектив и поиск выхода из запутанных ситуаций.',
+    img: 'https://board.mista.ua/2022/145778_1_2.jpg'
+  },
+  {
+    title: 'Астрология',
+    desc: 'Персональный гороскоп. Кармические задачи, совместимость партнеров (синастрия) и прогноз транзитов планет на год.',
+    img: 'https://vkurse.ua/wp-content/uploads/2025/05/astrologiya-znaky-zodiaku.jpg'
+  },
+  {
+    title: 'Обряды',
+    desc: 'Обряды, которые помогут вам очистить энергетику, снять блоки и привлечь желаемое. Сила древних ритуалов для гармонизации судьбы и защиты.',
+    img: 'https://molfa.ua/files/images/svecha-magicheskaya-voskovaya-boginya-luna-pentakl-pentagramma-vedmin-kotel-vedma-krasnaya-chernaya-zelenaya-fioletovaya75.jpg'
+  }
+];
 
 const App: React.FC = () => {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitted'>('idle');
@@ -15,15 +81,22 @@ const App: React.FC = () => {
 
   // Preloader Logic
   useEffect(() => {
+    // Disable scrolling while loading
+    if (isLoading) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
     const timer = setTimeout(() => {
         setIsLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isLoading]);
 
   // Scroll Animation Logic
   useEffect(() => {
-    if (isLoading) return; // Wait for loading to finish
+    if (isLoading) return; 
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +106,7 @@ const App: React.FC = () => {
           }
         });
       },
-      { threshold: 0.1 } // Trigger when 10% of element is visible
+      { threshold: 0.1 } 
     );
 
     const revealElements = document.querySelectorAll('.reveal');
@@ -60,10 +133,9 @@ const App: React.FC = () => {
     }, 1500);
   };
 
-  // Функция для плавного скролла без изменения URL (чтобы избежать ошибки соединения)
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault(); // Отменяем стандартный переход
-    setIsMobileMenuOpen(false); // Закрываем мобильное меню если открыто
+    e.preventDefault(); 
+    setIsMobileMenuOpen(false); 
     
     if (targetId === 'top') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -75,22 +147,6 @@ const App: React.FC = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const navLinks = [
-    { name: 'Обо мне', href: '#about' },
-    { name: 'Практики', href: '#practices' },
-    { name: 'Преимущества', href: '#benefits' },
-    { name: 'Отзывы', href: '#reviews' },
-    { name: 'Заказать расклад', href: '#contact' },
-  ];
-
-  const servicesList = [
-    "Расклады Таро",
-    "Руническая Магия",
-    "Астрология",
-    "Обряды и Ритуалы",
-    "Другой вопрос"
-  ];
 
   return (
     <div className="min-h-screen font-serif text-gray-200">
@@ -117,7 +173,7 @@ const App: React.FC = () => {
 
           {/* Desktop Nav */}
           <nav className="hidden xl:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <a 
                 key={link.name} 
                 href={link.href}
@@ -147,6 +203,7 @@ const App: React.FC = () => {
             <button 
               className="xl:hidden text-gold hover:text-white transition-colors ml-4"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
             </button>
@@ -156,6 +213,7 @@ const App: React.FC = () => {
           <button 
             className="md:hidden text-gold hover:text-white transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
@@ -163,21 +221,21 @@ const App: React.FC = () => {
 
         {/* Mobile Nav Dropdown */}
         {isMobileMenuOpen && (
-          <div className="bg-[#0a0a12] border-t border-gold/20 absolute w-full left-0 animate-fade-in shadow-2xl xl:hidden">
+          <div className="bg-dark-bg/95 backdrop-blur-lg border-t border-gold/20 absolute w-full left-0 animate-fade-in shadow-2xl xl:hidden z-40">
             <div className="flex flex-col p-6 gap-6">
-              {navLinks.map((link) => (
+              {NAV_LINKS.map((link) => (
                 <a 
                   key={link.name} 
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-lg text-gray-200 hover:text-gold font-decorative"
+                  className="text-lg text-gray-200 hover:text-gold font-decorative tracking-wide"
                 >
                   {link.name}
                 </a>
               ))}
               <div className="h-px bg-gold/20 my-2 md:hidden"></div>
               <div className="md:hidden">
-                <a href="tel:+380505337014" className="text-gold flex items-center gap-3 text-lg mb-4">
+                <a href="tel:+380505337014" className="text-gold flex items-center gap-3 text-lg mb-4 font-bold">
                   <Phone className="w-5 h-5" /> +380 50 533 70 14
                 </a>
                 <div className="flex gap-6">
@@ -252,30 +310,8 @@ const App: React.FC = () => {
           <h2 className="font-decorative text-gold-gradient text-4xl text-center mb-16 relative after:content-['✦'] after:block after:text-2xl after:text-gold-glow after:opacity-80 after:mt-4 reveal">
             Мои Практики
           </h2>
-          {/* Changed grid to 2 columns for symmetry with 4 items */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {[
-              {
-                title: 'Руническая Магия',
-                desc: 'Диагностика на Старшем Футарке. Создание индивидуальных ставов и амулетов для защиты, привлечения удачи и коррекции судьбы.',
-                img: 'https://xland.by/image/catalog/product_8593_0_image.jpg'
-              },
-              {
-                title: 'Расклады Таро',
-                desc: 'Зеркало вашего подсознания. Разбор отношений, анализ карьерных перспектив и поиск выхода из запутанных ситуаций.',
-                img: 'https://board.mista.ua/2022/145778_1_2.jpg'
-              },
-              {
-                title: 'Астрология',
-                desc: 'Персональный гороскоп. Кармические задачи, совместимость партнеров (синастрия) и прогноз транзитов планет на год.',
-                img: 'https://vkurse.ua/wp-content/uploads/2025/05/astrologiya-znaky-zodiaku.jpg'
-              },
-              {
-                title: 'Обряды',
-                desc: 'Обряды, которые помогут вам очистить энергетику, снять блоки и привлечь желаемое. Сила древних ритуалов для гармонизации судьбы и защиты.',
-                img: 'https://molfa.ua/files/images/svecha-magicheskaya-voskovaya-boginya-luna-pentakl-pentagramma-vedmin-kotel-vedma-krasnaya-chernaya-zelenaya-fioletovaya75.jpg'
-              }
-            ].map((item, index) => (
+            {PRACTICES.map((item, index) => (
               <div key={index} className="bg-card-bg border border-gold/40 rounded overflow-hidden hover:-translate-y-4 hover:shadow-[0_10px_40px_rgba(212,175,55,0.15)] hover:border-gold transition-all duration-500 group reveal">
                 <img 
                   src={item.img} 
@@ -299,12 +335,7 @@ const App: React.FC = () => {
             Почему выбирают меня?
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Eye, title: 'Ясность', text: 'Говорю четко и по существу. Без воды, мистического тумана и размытых фраз. Только факты расклада.' },
-              { icon: Shield, title: 'Тайна', text: 'Всё, что происходит на сеансе, остается между нами. Это главное правило моей этики.' },
-              { icon: Sparkles, title: 'Экология', text: 'Работаю безопасно для вашей кармы. Никакого подавления воли и черных ритуалов.' },
-              { icon: Compass, title: 'Результат', text: 'Цель консультации — не напугать, а дать инструменты для решения проблемы здесь и сейчас.' }
-            ].map((item, idx) => (
+            {BENEFITS.map((item, idx) => (
               <div key={idx} className="text-center p-8 bg-white/5 border border-gold/20 hover:bg-gold/10 hover:border-gold transition-all duration-300 group cursor-default reveal">
                 <item.icon className="w-12 h-12 text-gold mx-auto mb-6 drop-shadow-[0_0_10px_rgba(212,175,55,0.5)] group-hover:scale-110 transition-transform" />
                 <h4 className="font-decorative text-xl text-gold mb-3">{item.title}</h4>
@@ -322,24 +353,7 @@ const App: React.FC = () => {
             Отзывы
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                name: "Ольга К.",
-                text: "Заказывала расклад на любовную сферу, отношения были в тупике. Мастер не просто предсказал развитие событий, а показал корень проблемы во мне. Это было жестко, но честно. Спустя месяц все наладилось именно так, как говорили карты.",
-              },
-              {
-                name: "Алексей М.",
-                text: "Стоял на перепутье в бизнесе, риск был огромен. Руническая диагностика дала четкое понимание вектора движения. Сделка прошла успешно, благодарю за ясность ума и своевременную подсказку!",
-              },
-              {
-                name: "Елена В.",
-                text: "Астрологический разбор открыл глаза на мои кармические задачи. Я годами наступала на одни и те же грабли. Теперь у меня есть 'карта' моей жизни. Очень глубокий и профессиональный подход.",
-              },
-              {
-                name: "Мария С.",
-                text: "Невероятная энергетика! После сеанса вышла с легким сердцем. Все страхи и сомнения ушли, появилась уверенность в завтрашнем дне. Спасибо за тепло, мудрость и поддержку в трудную минуту.",
-              }
-            ].map((review, idx) => (
+            {REVIEWS.map((review, idx) => (
               <div key={idx} className="bg-white/5 border border-gold/20 p-8 rounded-lg hover:border-gold/60 transition-colors duration-300 relative reveal">
                 <div className="flex gap-1 text-gold mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -385,7 +399,7 @@ const App: React.FC = () => {
                     required 
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6"
+                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6 rounded-none transition-colors"
                     placeholder=" "
                   />
                   <label 
@@ -396,7 +410,7 @@ const App: React.FC = () => {
                   </label>
                 </div>
 
-                {/* 2. Phone Input (Moved Up, Renamed) */}
+                {/* 2. Phone Input */}
                 <div className="relative group">
                   <input 
                     type="tel" 
@@ -404,7 +418,7 @@ const App: React.FC = () => {
                     required 
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
-                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6"
+                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6 rounded-none transition-colors"
                     placeholder=" "
                   />
                    <label 
@@ -415,15 +429,15 @@ const App: React.FC = () => {
                   </label>
                 </div>
 
-                {/* 3. Service Selection (Moved Down) */}
+                {/* 3. Service Selection */}
                 <div className="relative group text-left">
                   <select
                     id="service"
                     value={service}
                     onChange={(e) => setService(e.target.value)}
-                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6 cursor-pointer"
+                    className="block px-4 py-4 w-full text-white bg-[#10101a] border border-[#444] border-l-[3px] border-l-gold appearance-none focus:outline-none focus:ring-0 focus:border-gold-glow focus:shadow-[0_0_15px_rgba(212,175,55,0.1)] peer pt-6 cursor-pointer rounded-none transition-colors"
                   >
-                    {servicesList.map(s => (
+                    {SERVICES_LIST.map(s => (
                       <option key={s} value={s} className="bg-dark-bg text-gray-200 py-2">{s}</option>
                     ))}
                   </select>
@@ -433,7 +447,7 @@ const App: React.FC = () => {
                   >
                     Что вас интересует?
                   </label>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gold w-5 h-5 pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1 text-gold w-5 h-5 pointer-events-none" />
                 </div>
 
                 {/* Premium Gold Button */}
@@ -468,7 +482,7 @@ const App: React.FC = () => {
             <div className="text-center">
               <h4 className="font-decorative text-lg text-gold mb-6">Навигация</h4>
               <ul className="space-y-3">
-                {navLinks.map(link => (
+                {NAV_LINKS.map(link => (
                   <li key={link.name}>
                     <a href={link.href} onClick={(e) => handleNavClick(e, link.href)} className="text-gray-400 hover:text-gold transition-colors text-sm">
                       {link.name}
@@ -482,7 +496,7 @@ const App: React.FC = () => {
             <div className="text-center md:text-right">
               <h4 className="font-decorative text-lg text-gold mb-6">Свяжитесь с нами</h4>
               <div className="flex flex-col items-center md:items-end gap-3">
-                 <a href="tel:+380505337014" className="text-gray-300 hover:text-gold transition-colors text-lg flex items-center gap-2">
+                 <a href="tel:+380505337014" className="text-gray-300 hover:text-gold transition-colors text-lg flex items-center gap-2 font-bold tracking-wide">
                    <span>+380 50 533 70 14</span> <Phone className="w-4 h-4" />
                  </a>
                  <div className="flex gap-4 mt-2">
