@@ -31,11 +31,12 @@ const StarBackground: React.FC = () => {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.size = Math.random() * 2.5 + 0.8; // Slightly larger stars
+        this.size = Math.random() * 2.0 + 0.5; // Slightly smaller
         // Levitating effect: slow random drift
-        this.speedX = (Math.random() - 0.5) * 0.4; 
-        this.speedY = (Math.random() - 0.5) * 0.4;
-        this.opacity = Math.random() * 0.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.2; 
+        this.speedY = (Math.random() - 0.5) * 0.2;
+        // Reduced opacity (approx 50% less visibility)
+        this.opacity = Math.random() * 0.3 + 0.1; 
       }
 
       update() {
@@ -49,10 +50,10 @@ const StarBackground: React.FC = () => {
         if (this.y < 0) this.y = height;
         else if (this.y > height) this.y = 0;
         
-        // Gentle twinkle
-        this.opacity += (Math.random() - 0.5) * 0.03;
-        if (this.opacity < 0.3) this.opacity = 0.3;
-        if (this.opacity > 1) this.opacity = 1;
+        // Gentle twinkle (reduced intensity)
+        this.opacity += (Math.random() - 0.5) * 0.01;
+        if (this.opacity < 0.1) this.opacity = 0.1;
+        if (this.opacity > 0.5) this.opacity = 0.5;
       }
 
       draw() {
@@ -62,9 +63,9 @@ const StarBackground: React.FC = () => {
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
         
-        // Glow effect
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = "white";
+        // Reduced Glow effect
+        ctx.shadowBlur = 2;
+        ctx.shadowColor = "rgba(255, 255, 255, 0.5)";
       }
     }
 
@@ -72,7 +73,7 @@ const StarBackground: React.FC = () => {
 
     const init = () => {
       stars = [];
-      const numberOfStars = (width * height) / 9000; // Increased density
+      const numberOfStars = (width * height) / 9000; 
       for (let i = 0; i < numberOfStars; i++) {
         stars.push(new Star());
       }
@@ -82,10 +83,10 @@ const StarBackground: React.FC = () => {
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
-      // Deep Space Gradient Background
+      // Deep Space Gradient Background - Made Darker/Dark Blue
       const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width);
-      gradient.addColorStop(0, '#1a1a2e'); // Lighter center (dark blue-purple)
-      gradient.addColorStop(0.5, '#0f0f1a'); 
+      gradient.addColorStop(0, '#0a0a15'); // Very dark center
+      gradient.addColorStop(0.5, '#05050a'); 
       gradient.addColorStop(1, '#000000'); // Black edges
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
@@ -100,10 +101,10 @@ const StarBackground: React.FC = () => {
           // Connect if close enough
           if (distance < 130) {
             ctx.beginPath();
-            // Line opacity fades with distance
+            // Line opacity fades with distance - Reduced visibility by half
             const opacity = 1 - (distance / 130);
-            ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.3})`; // Gold lines
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.15})`; // Gold lines with much lower opacity
+            ctx.lineWidth = 0.5;
             ctx.moveTo(stars[i].x, stars[i].y);
             ctx.lineTo(stars[j].x, stars[j].y);
             ctx.stroke();
