@@ -122,7 +122,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isLoading) return; 
 
-    const observer = new IntersectionObserver(
+    // Observer 1: Standard Text Reveals (Faster - 15% visibility)
+    const textObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -130,13 +131,31 @@ const App: React.FC = () => {
           }
         });
       },
-      { threshold: 0.1 } 
+      { threshold: 0.15 } 
     );
 
-    const revealElements = document.querySelectorAll('.reveal');
-    revealElements.forEach((el) => observer.observe(el));
+    // Observer 2: Image Flips (Slower - 45% visibility to trigger flip)
+    const imageObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('active');
+            }
+          });
+        },
+        { threshold: 0.45 } 
+      );
 
-    return () => observer.disconnect();
+    const textElements = document.querySelectorAll('.reveal');
+    const imageElements = document.querySelectorAll('.reveal-img');
+
+    textElements.forEach((el) => textObserver.observe(el));
+    imageElements.forEach((el) => imageObserver.observe(el));
+
+    return () => {
+        textObserver.disconnect();
+        imageObserver.disconnect();
+    };
   }, [isLoading]);
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -176,26 +195,26 @@ const App: React.FC = () => {
     <div className="min-h-screen font-serif text-gray-200">
       {/* MYSTIC PRELOADER */}
       <div className={`fixed inset-0 z-[100] bg-dark-bg flex flex-col items-center justify-center transition-opacity duration-1000 ${isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-         <Sparkles className="w-16 h-16 text-gold animate-pulse mb-4" />
-         <h2 className="font-decorative text-gold-gradient text-2xl tracking-[0.2em] animate-pulse">Открываем портал...</h2>
+         <Sparkles className="w-12 h-12 text-gold animate-pulse mb-4" />
+         <h2 className="font-decorative text-gold-gradient text-xl tracking-[0.2em] animate-pulse">Открываем портал...</h2>
       </div>
 
       <StarBackground />
 
-      {/* HEADER */}
+      {/* HEADER - Reduced padding and text size */}
       <header 
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b border-gold/20
-          ${isScrolled ? 'bg-dark-bg/95 py-4 shadow-lg' : 'bg-dark-bg/80 backdrop-blur-md py-8'}
+          ${isScrolled ? 'bg-dark-bg/95 py-3 shadow-lg' : 'bg-dark-bg/80 backdrop-blur-md py-5'}
         `}
       >
-        <div className="container mx-auto max-w-[1400px] px-6 grid grid-cols-[1fr_auto_1fr] items-center">
+        <div className="container mx-auto max-w-[1200px] px-6 grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Logo - Left */}
           <div className="flex justify-start">
             <a 
               href="#" 
               onClick={(e) => handleNavClick(e, 'top')}
               className={`font-decorative text-gold-gradient font-bold hover:text-gold-glow transition-all duration-500 drop-shadow-[0_0_5px_rgba(212,175,55,0.5)]
-                ${isScrolled ? 'text-3xl' : 'text-4xl'}
+                ${isScrolled ? 'text-2xl' : 'text-3xl'}
               `}
             >
               RUNARIS
@@ -203,13 +222,13 @@ const App: React.FC = () => {
           </div>
 
           {/* Desktop Nav - Center */}
-          <nav className="hidden xl:flex items-center gap-12 justify-center">
+          <nav className="hidden xl:flex items-center gap-8 justify-center">
             {NAV_LINKS.map((link) => (
               <a 
                 key={link.name} 
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-lg uppercase tracking-widest text-gray-300 hover:text-gold transition-colors font-serif border-b border-transparent hover:border-gold/50 pb-1 cursor-pointer whitespace-nowrap"
+                className="text-base uppercase tracking-widest text-gray-300 hover:text-gold transition-colors font-serif border-b border-transparent hover:border-gold/50 pb-1 cursor-pointer whitespace-nowrap"
               >
                 {link.name}
               </a>
@@ -217,13 +236,13 @@ const App: React.FC = () => {
           </nav>
 
           {/* Right Section: Contact Button + Telegram + Mobile Toggle */}
-          <div className="flex items-center justify-end gap-6">
+          <div className="flex items-center justify-end gap-5">
             
             {/* Subtle Contact Button */}
             <button
                 onClick={(e) => handleNavClick(null, '#contact')}
-                className={`hidden xl:block px-6 font-serif border border-gold/40 text-gold rounded-full hover:bg-gold/10 hover:border-gold transition-all duration-300
-                  ${isScrolled ? 'py-1.5 text-sm' : 'py-2 text-base'}
+                className={`hidden xl:block px-5 font-serif border border-gold/40 text-gold rounded-full hover:bg-gold/10 hover:border-gold transition-all duration-300
+                  ${isScrolled ? 'py-1 text-xs' : 'py-1.5 text-sm'}
                 `}
             >
                 Связаться
@@ -236,7 +255,7 @@ const App: React.FC = () => {
               className="hidden xl:flex text-gold hover:text-gold-glow transition-colors hover:scale-110 duration-300"
               title="Написать в Telegram"
             >
-              <TelegramIcon className="w-8 h-8" />
+              <TelegramIcon className="w-6 h-6" />
             </a>
 
             {/* Mobile Menu Toggle */}
@@ -244,7 +263,7 @@ const App: React.FC = () => {
               className="xl:hidden text-gold hover:text-gold-glow transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="w-10 h-10" /> : <Menu className="w-10 h-10" />}
+              {isMobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
             </button>
           </div>
         </div>
@@ -253,13 +272,13 @@ const App: React.FC = () => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-dark-bg/95 flex flex-col items-center justify-center animate-fade-in">
-          <nav className="flex flex-col items-center gap-8">
+          <nav className="flex flex-col items-center gap-6">
             {NAV_LINKS.map((link) => (
               <a 
                 key={link.name} 
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="font-decorative text-3xl text-gold hover:text-gold-glow transition-colors"
+                className="font-decorative text-2xl text-gold hover:text-gold-glow transition-colors"
               >
                 {link.name}
               </a>
@@ -268,9 +287,9 @@ const App: React.FC = () => {
               href="https://t.me/ppc_marketer"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 flex items-center gap-2 font-decorative text-2xl text-gold hover:text-gold-glow"
+              className="mt-4 flex items-center gap-2 font-decorative text-xl text-gold hover:text-gold-glow"
             >
-              <TelegramIcon className="w-8 h-8" />
+              <TelegramIcon className="w-6 h-6" />
               Telegram
             </a>
           </nav>
@@ -282,14 +301,14 @@ const App: React.FC = () => {
         href="https://wa.me/380505337014"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform duration-300 flex items-center justify-center group animate-pulse-slow"
+        className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-3 rounded-full shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform duration-300 flex items-center justify-center group animate-pulse-slow"
         aria-label="Написать в WhatsApp"
       >
-        <MessageCircle className="w-8 h-8 fill-current" />
+        <MessageCircle className="w-6 h-6 fill-current" />
       </a>
 
-      {/* Hero Section */}
-      <section id="hero" className="min-h-screen flex items-center justify-center relative pt-36 overflow-hidden">
+      {/* Hero Section - Compacted */}
+      <section id="hero" className="min-h-screen flex items-center justify-center relative pt-24 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video 
@@ -305,15 +324,15 @@ const App: React.FC = () => {
           <div className="absolute inset-0 bg-black/50 bg-gradient-to-b from-dark-bg/40 via-transparent to-dark-bg"></div>
         </div>
 
-        <div className="container mx-auto px-6 text-center z-10 reveal">
-          <h1 className="font-decorative text-5xl md:text-7xl lg:text-8xl text-gold-gradient mb-6 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+        <div className="container mx-auto px-6 text-center z-10 reveal max-w-[1000px]">
+          <h1 className="font-decorative text-5xl md:text-6xl lg:text-7xl text-gold-gradient mb-5 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             RUNARIS
           </h1>
-          <p className="font-serif text-xl md:text-2xl text-gray-300 mb-6 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+          <p className="font-serif text-lg md:text-xl text-gray-300 mb-5 max-w-xl mx-auto leading-relaxed drop-shadow-md">
             Откройте завесу тайны. Древние знания Таро, Рун и Астрологии помогут найти ответы на главные вопросы вашей судьбы.
           </p>
-          <div className="mb-10 mt-8">
-            <p className="font-serif text-xl md:text-2xl text-gold font-bold drop-shadow-md inline-block relative py-2">
+          <div className="mb-8 mt-6">
+            <p className="font-serif text-lg md:text-2xl text-gold font-bold drop-shadow-md inline-block relative py-2">
                Записывайтесь на первый сеанс Бесплатно.
             </p>
           </div>
@@ -321,7 +340,7 @@ const App: React.FC = () => {
             <a 
               href="#contact" 
               onClick={(e) => handleNavClick(e, '#contact')}
-              className="px-14 py-8 text-3xl bg-transparent border-2 border-gold text-gold font-decorative font-bold uppercase tracking-widest hover:bg-gold hover:text-dark-bg transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] rounded-[25%] backdrop-blur-sm"
+              className="px-10 py-5 text-2xl bg-transparent border-2 border-gold text-gold font-decorative font-bold uppercase tracking-widest hover:bg-gold hover:text-dark-bg transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] rounded-[25%] backdrop-blur-sm"
             >
               Записаться
             </a>
@@ -329,16 +348,16 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Runes Section */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-transparent to-black/20">
-        <div className="container mx-auto px-6 max-w-[1400px]">
-          <div className="flex flex-col md:flex-row items-center gap-12">
+      {/* Why Runes Section - Compacted */}
+      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-transparent to-black/20">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <div className="flex flex-col md:flex-row items-center gap-10">
             {/* Text Side - Left */}
             <div className="w-full md:w-1/2 reveal order-2 md:order-1">
-               <h2 className="font-decorative text-4xl md:text-5xl text-gold-gradient mb-8">
+               <h2 className="font-decorative text-3xl md:text-4xl text-gold-gradient mb-6">
                 Почему Руны?
               </h2>
-              <div className="space-y-6 text-gray-300 text-lg leading-relaxed font-serif">
+              <div className="space-y-4 text-gray-300 text-base leading-relaxed font-serif">
                 <p>
                   Скандинавская традиция V века — это не про «угадать будущее», а про то, чтобы увидеть настоящее без иллюзий. Часто мы ходим по кругу, не замечая выхода, который находится рядом.
                 </p>
@@ -352,8 +371,8 @@ const App: React.FC = () => {
             </div>
 
             {/* Image Side - Right */}
-            <div className="w-full md:w-1/2 reveal order-1 md:order-2">
-              <div className="relative w-full max-w-md mx-auto aspect-[3/4] rounded-2xl overflow-hidden border border-gold/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div className="w-full md:w-1/2 reveal-img order-1 md:order-2">
+              <div className="relative w-full max-w-sm mx-auto aspect-[3/4] rounded-xl overflow-hidden border border-gold/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
                 <img
                   src="https://res.cloudinary.com/dtqoqevqf/image/upload/v1764410430/Gemini_Generated_Image_y8b31by8b31by8b3_ewqwzx.png"
                   alt="Почему Руны"
@@ -366,13 +385,13 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* About Me Section */}
-      <section id="about" className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-[1400px]">
-          <div className="flex flex-col md:flex-row items-center gap-12">
+      {/* About Me Section - Compacted */}
+      <section id="about" className="py-20 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <div className="flex flex-col md:flex-row items-center gap-10">
             {/* Image Side */}
-            <div className="w-full md:w-1/2 reveal">
-              <div className="relative w-full max-w-md mx-auto aspect-[3/4] rounded-2xl overflow-hidden border border-gold/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div className="w-full md:w-1/2 reveal-img">
+              <div className="relative w-full max-w-sm mx-auto aspect-[3/4] rounded-xl overflow-hidden border border-gold/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
                 <img 
                   src="https://res.cloudinary.com/dtqoqevqf/image/upload/v1764351231/photo_2025-11-28_19-33-31_w5vdph.jpg" 
                   alt="Мастер Илья - Рунолог" 
@@ -384,10 +403,10 @@ const App: React.FC = () => {
 
             {/* Text Side */}
             <div className="w-full md:w-1/2 reveal">
-              <h2 className="font-decorative text-4xl md:text-5xl text-gold-gradient mb-8">
+              <h2 className="font-decorative text-3xl md:text-4xl text-gold-gradient mb-6">
                 Обо мне
               </h2>
-              <div className="space-y-6 text-gray-300 text-lg leading-relaxed font-serif">
+              <div className="space-y-4 text-gray-300 text-base leading-relaxed font-serif">
                 <p>
                   Приветствую! Меня зовут Илья. Я — практикующий рунолог с опытом более 5 лет.
                 </p>
@@ -398,9 +417,9 @@ const App: React.FC = () => {
                   Я не программирую вас на неизбежность, а раскрываю веер вариантов. Моя задача — стать вашим компасом в шторме жизни: подсветить скрытые блоки, найти ресурс для прорыва и помочь принять решение, которое истинно резонирует с вашей Душой.
                 </p>
                 
-                <div className="pt-6">
-                   <div className="inline-block p-4 border border-gold/20 rounded-lg bg-gold/5 backdrop-blur-sm">
-                        <p className="text-gold italic">
+                <div className="pt-4">
+                   <div className="inline-block p-3 border border-gold/20 rounded-lg bg-gold/5 backdrop-blur-sm">
+                        <p className="text-gold italic text-sm">
                             «В каждом из нас есть магия»
                         </p>
                    </div>
@@ -411,32 +430,32 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Practices Section */}
-      <section id="practices" className="py-24 bg-gradient-to-b from-transparent to-black/30">
-        <div className="container mx-auto px-6 max-w-[1400px]">
-          <h2 className="font-decorative text-4xl md:text-5xl text-center text-gold-gradient mb-16 reveal">
+      {/* Practices Section - Compacted */}
+      <section id="practices" className="py-20 bg-gradient-to-b from-transparent to-black/30">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <h2 className="font-decorative text-3xl md:text-4xl text-center text-gold-gradient mb-12 reveal">
             Чем я могу помочь
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 px-2">
             {PRACTICES.map((practice, index) => (
               <div 
                 key={index}
                 onClick={() => handleNavClick(null, '#contact')} 
-                className="reveal group relative bg-card-bg border border-gold/20 rounded-xl overflow-hidden hover:border-gold/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] flex flex-col md:flex-row cursor-pointer"
-                style={{ transitionDelay: `${index * 100}ms` }}
+                className="reveal-img group relative bg-card-bg border border-gold/20 rounded-xl overflow-hidden hover:border-gold/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] flex flex-col md:flex-row cursor-pointer h-full"
+                style={{ transitionDelay: `${index * 150}ms` }}
               >
-                <div className="w-full md:w-2/5 h-64 md:h-auto overflow-hidden">
+                <div className="w-full md:w-2/5 h-56 md:h-auto overflow-hidden">
                   <img 
                     src={practice.img} 
                     alt={practice.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
-                <div className="p-8 md:w-3/5 flex flex-col justify-center">
-                  <h3 className="font-decorative text-2xl text-gold mb-4 group-hover:text-gold-glow transition-colors">
+                <div className="p-6 md:w-3/5 flex flex-col justify-center">
+                  <h3 className="font-decorative text-xl text-gold mb-3 group-hover:text-gold-glow transition-colors">
                     {practice.title}
                   </h3>
-                  <p className="text-gray-300 leading-relaxed text-sm md:text-base">
+                  <p className="text-gray-300 leading-relaxed text-sm">
                     {practice.desc}
                   </p>
                 </div>
@@ -446,22 +465,22 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="benefits" className="py-24 relative overflow-hidden">
+      {/* Benefits Section - Compacted */}
+      <section id="benefits" className="py-20 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gold/5 blur-3xl -z-10"></div>
-        <div className="container mx-auto px-6 max-w-[1400px]">
-          <h2 className="font-decorative text-4xl md:text-5xl text-center text-gold-gradient mb-16 reveal">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <h2 className="font-decorative text-3xl md:text-4xl text-center text-gold-gradient mb-12 reveal">
             Почему выбирают меня
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {BENEFITS.map((item, index) => (
               <div 
                 key={index} 
-                className="reveal p-8 border border-gold/20 bg-card-bg/50 backdrop-blur-sm rounded-lg hover:bg-gold/10 transition-all duration-300 text-center group"
+                className="reveal p-6 border border-gold/20 bg-card-bg/50 backdrop-blur-sm rounded-lg hover:bg-gold/10 transition-all duration-300 text-center group"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <item.icon className="w-12 h-12 text-gold mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
-                <h3 className="font-decorative text-xl text-gold-glow mb-4">{item.title}</h3>
+                <item.icon className="w-10 h-10 text-gold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                <h3 className="font-decorative text-lg text-gold-glow mb-3">{item.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{item.text}</p>
               </div>
             ))}
@@ -469,30 +488,30 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Reviews Section */}
-      <section id="reviews" className="py-24">
-        <div className="container mx-auto px-6 max-w-[1400px]">
-          <h2 className="font-decorative text-4xl md:text-5xl text-center text-gold-gradient mb-16 reveal">
+      {/* Reviews Section - Compacted */}
+      <section id="reviews" className="py-20">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <h2 className="font-decorative text-3xl md:text-4xl text-center text-gold-gradient mb-12 reveal">
             Отзывы
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {REVIEWS.map((review, index) => (
               <div 
                 key={index} 
-                className="reveal bg-card-bg p-8 border border-gold/20 rounded-lg relative hover:border-gold/40 transition-colors"
+                className="reveal bg-card-bg p-6 border border-gold/20 rounded-lg relative hover:border-gold/40 transition-colors"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className="absolute top-4 right-6 text-6xl text-gold/10 font-decorative leading-none">”</div>
-                <p className="text-gray-300 italic mb-6 relative z-10 leading-relaxed">
+                <div className="absolute top-4 right-6 text-5xl text-gold/10 font-decorative leading-none">”</div>
+                <p className="text-gray-300 italic mb-4 relative z-10 leading-relaxed text-sm">
                   "{review.text}"
                 </p>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <div className="flex gap-1">
                         {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+                            <Star key={i} className="w-3 h-3 fill-gold text-gold" />
                         ))}
                     </div>
-                    <div className="flex items-center gap-2 text-gold-glow font-bold font-decorative">
+                    <div className="flex items-center gap-2 text-gold-glow font-bold font-decorative text-sm">
                         <span>{review.name}</span>
                     </div>
                 </div>
@@ -502,64 +521,64 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-24 pb-32">
-        <div className="container mx-auto px-6 max-w-3xl flex justify-center">
-          <div className="w-full reveal bg-card-bg border border-gold/30 p-8 md:p-12 rounded-2xl shadow-[0_0_50px_rgba(212,175,55,0.1)] relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+      {/* Contact Section - Compacted */}
+      <section id="contact" className="py-20 pb-28">
+        <div className="container mx-auto px-6 max-w-2xl flex justify-center">
+          <div className="w-full reveal-img bg-card-bg border border-gold/30 p-6 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(212,175,55,0.1)] relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
             
-            <h2 className="font-decorative text-3xl md:text-4xl text-center text-gold-gradient mb-8">
+            <h2 className="font-decorative text-2xl md:text-3xl text-center text-gold-gradient mb-6">
               Записаться на сеанс
             </h2>
-            <p className="text-center text-gray-400 mb-10 max-w-lg mx-auto">
+            <p className="text-center text-gray-400 mb-8 max-w-md mx-auto text-sm">
               Оставьте заявку, и я свяжусь с вами в ближайшее время для уточнения деталей.
             </p>
 
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-gold ml-1">Ваше Имя</label>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-widest text-gold ml-1">Ваше Имя</label>
                 <input 
                   type="text" 
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-4 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all placeholder-gray-600 focus:bg-gold/5"
+                  className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-3 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all placeholder-gray-600 focus:bg-gold/5 text-sm"
                   placeholder="Имя"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-gold ml-1">Контакт для связи</label>
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-widest text-gold ml-1">Контакт для связи</label>
                 <input 
                   type="text" 
                   required
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-4 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all placeholder-gray-600 focus:bg-gold/5"
+                  className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-3 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all placeholder-gray-600 focus:bg-gold/5 text-sm"
                   placeholder="WhatsApp / Telegram / Телефон"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-gold ml-1">Интересующая услуга</label>
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-widest text-gold ml-1">Интересующая услуга</label>
                 <div className="relative">
                   <select 
                     value={service}
                     onChange={(e) => setService(e.target.value)}
-                    className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-4 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all appearance-none cursor-pointer focus:bg-gold/5"
+                    className="w-full bg-dark-bg/50 border border-gold/30 rounded-lg p-3 text-white focus:border-gold focus:shadow-[0_0_15px_rgba(212,175,55,0.2)] outline-none transition-all appearance-none cursor-pointer focus:bg-gold/5 text-sm"
                   >
                     {SERVICES_LIST.map((s) => (
                       <option key={s} value={s} className="bg-dark-bg text-gray-200">{s}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gold w-5 h-5 pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gold w-4 h-4 pointer-events-none" />
                 </div>
               </div>
 
               <button 
                 type="submit"
                 disabled={formStatus === 'submitted'}
-                className="w-full py-4 mt-4 bg-gold text-dark-bg font-decorative font-bold text-lg uppercase tracking-widest hover:bg-gold-glow hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-[0.98]"
+                className="w-full py-3 mt-4 bg-gold text-dark-bg font-decorative font-bold text-base uppercase tracking-widest hover:bg-gold-glow hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-[0.98]"
               >
                 {formStatus === 'submitted' ? 'Переходим в WhatsApp...' : 'Отправить Заявку'}
               </button>
@@ -568,41 +587,49 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-black/80 border-t border-gold/10">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-            <div className="text-center md:text-left">
-               <p className="font-decorative text-gold text-2xl mb-2">RUNARIS</p>
-               <p className="text-gray-500 text-sm max-w-xs">Древние знания для современной жизни. Найди ответы в рунах и звездах.</p>
+      {/* Footer - Compacted */}
+      <footer className="py-12 bg-black/90 border-t border-gold/10 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start justify-items-center md:justify-items-start text-center md:text-left">
+            
+            {/* Column 1: Brand */}
+            <div className="flex flex-col items-center md:items-start reveal">
+               <p className="font-decorative text-gold text-2xl mb-3">RUNARIS</p>
+               <p className="text-gray-500 text-xs leading-relaxed max-w-xs">Древние знания для современной жизни. Найди ответы в рунах и звездах.</p>
             </div>
             
-            <nav className="flex flex-wrap justify-center gap-6 md:gap-8">
+            {/* Column 2: Vertical Nav */}
+            <nav className="flex flex-col gap-3 items-center md:items-start w-full reveal" style={{ transitionDelay: '100ms' }}>
+              <h4 className="text-gold font-serif mb-2 uppercase tracking-widest text-xs opacity-60">Меню</h4>
               {NAV_LINKS.map((link) => (
                 <a 
                   key={link.name} 
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-sm uppercase tracking-wider text-gray-400 hover:text-gold transition-colors font-serif"
+                  className="text-gray-400 hover:text-gold transition-all duration-300 font-serif hover:translate-x-2 text-sm"
                 >
                   {link.name}
                 </a>
               ))}
             </nav>
 
-            <div className="flex gap-4">
-              <a href="https://t.me/ppc_marketer" className="text-gold hover:text-white transition-colors">
-                <TelegramIcon className="w-6 h-6" />
+            {/* Column 3: Socials/Contacts */}
+            <div className="flex flex-col items-center md:items-start gap-3 reveal" style={{ transitionDelay: '200ms' }}>
+              <h4 className="text-gold font-serif mb-2 uppercase tracking-widest text-xs opacity-60">Контакты</h4>
+              <a href="https://t.me/ppc_marketer" className="flex items-center gap-2 text-gray-400 hover:text-gold transition-colors group text-sm">
+                <TelegramIcon className="w-4 h-4 group-hover:text-gold transition-colors" />
+                <span>Telegram: @ppc_marketer</span>
               </a>
-              {/* WhatsApp can be added here too if needed */}
+               <a href="https://wa.me/380505337014" className="flex items-center gap-2 text-gray-400 hover:text-gold transition-colors group text-sm">
+                <MessageCircle className="w-4 h-4 group-hover:text-gold transition-colors" />
+                <span>WhatsApp</span>
+              </a>
             </div>
           </div>
           
-          <div className="border-t border-gray-800 pt-8 text-center">
-            <p className="text-gray-600 text-xs">
-              &copy; {new Date().getFullYear()} RUNARIS. Все права защищены. <br/>
-              Сайт не является публичной офертой.
-            </p>
+          <div className="border-t border-gold/10 mt-10 pt-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-gray-600 text-[10px] reveal">
+            <p>&copy; {new Date().getFullYear()} RUNARIS. Все права защищены.</p>
+            <p className="mt-2 md:mt-0">Сайт не является публичной офертой.</p>
           </div>
         </div>
       </footer>

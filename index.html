@@ -60,7 +60,7 @@
         background: #D4AF37; 
       }
 
-      /* Scroll Reveal Classes */
+      /* Scroll Reveal Classes - Text/General */
       .reveal {
         opacity: 0;
         transform: translateY(30px);
@@ -69,6 +69,22 @@
       .reveal.active {
         opacity: 1;
         transform: translateY(0);
+      }
+
+      /* 3D Flip Reveal Animation */
+      .reveal-img {
+        opacity: 0;
+        /* Start rotated 90deg on Y axis (like a card on its edge) and slightly scaled down */
+        transform: perspective(1500px) rotateY(90deg) scale(0.9);
+        transform-origin: center center;
+        backface-visibility: hidden;
+        /* Smooth easing for a "heavy" mystical feel */
+        transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal-img.active {
+        opacity: 1;
+        /* End flat facing the user */
+        transform: perspective(1500px) rotateY(0deg) scale(1);
       }
 
       /* Realistic Metallic Gold Gradient Text */
