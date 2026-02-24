@@ -297,17 +297,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Floating WhatsApp Button */}
-      <a
-        href="https://wa.me/380505337014"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-3 rounded-full shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform duration-300 flex items-center justify-center group animate-pulse-slow"
-        aria-label="Написать в WhatsApp"
-      >
-        <MessageCircle className="w-6 h-6 fill-current" />
-      </a>
-
       {/* Hero Section - Compacted */}
       <section id="hero" className="min-h-screen flex items-center justify-center relative pt-24 overflow-hidden">
         {/* Video Background */}
