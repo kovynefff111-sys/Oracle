@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StarBackground from './components/StarBackground';
+import OracleModal from './components/OracleModal';
 import { Eye, Shield, Sparkles, Compass, Menu, X, Star, ChevronDown, Send, MessageCircle } from 'lucide-react';
 
 // Static data moved outside component for performance
@@ -633,6 +634,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
+      <OracleModal />
     </div>
   );
 };
