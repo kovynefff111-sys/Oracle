@@ -318,12 +318,12 @@ const App: React.FC = () => {
           <h1 className="font-decorative text-5xl md:text-6xl lg:text-7xl text-gold-gradient mb-5 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             RUNARIS
           </h1>
-          <p className="font-serif text-lg md:text-xl text-gray-300 mb-5 max-w-xl mx-auto leading-relaxed drop-shadow-md">
-            Откройте завесу тайны. Древние знания Таро, Рун и Астрологии помогут найти ответы на главные вопросы вашей судьбы.
+          <p className="font-serif text-lg md:text-xl text-gray-200 mb-5 max-w-xl mx-auto leading-relaxed drop-shadow-md">
+            Получите ответы на важные вопросы с помощью древних Рун. Найдите свое предназначение и обретите уверенность в завтрашнем дне.
           </p>
           <div className="mb-8 mt-6">
             <p className="font-serif text-lg md:text-2xl text-gold font-bold drop-shadow-md inline-block relative py-2">
-               Записывайтесь на первый сеанс Бесплатно.
+               Первая диагностика бесплатно.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -347,7 +347,7 @@ const App: React.FC = () => {
                <h2 className="font-decorative text-3xl md:text-4xl text-gold-gradient mb-6">
                 Почему Руны?
               </h2>
-              <div className="space-y-4 text-gray-300 text-base leading-relaxed font-serif">
+              <div className="space-y-4 text-gray-200 text-base leading-relaxed font-serif">
                 <p>
                   Скандинавская традиция V века — это не про «угадать будущее», а про то, чтобы увидеть настоящее без иллюзий. Часто мы ходим по кругу, не замечая выхода, который находится рядом.
                 </p>
@@ -383,7 +383,7 @@ const App: React.FC = () => {
             <div className="w-full md:w-1/2 reveal-img">
               <div className="relative w-full max-w-sm mx-auto aspect-[3/4] rounded-xl overflow-hidden border border-gold/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
                 <img 
-                  src="https://res.cloudinary.com/dtqoqevqf/image/upload/v1764351231/photo_2025-11-28_19-33-31_w5vdph.jpg" 
+                  src="https://res.cloudinary.com/dtqoqevqf/image/upload/v1771943025/photo_2026-01-24_20-32-48_vvsqyt.jpg" 
                   alt="Мастер Илья - Рунолог" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
@@ -396,7 +396,7 @@ const App: React.FC = () => {
               <h2 className="font-decorative text-3xl md:text-4xl text-gold-gradient mb-6">
                 Обо мне
               </h2>
-              <div className="space-y-4 text-gray-300 text-base leading-relaxed font-serif">
+              <div className="space-y-4 text-gray-200 text-base leading-relaxed font-serif">
                 <p>
                   Приветствую! Меня зовут Илья. Я — практикующий рунолог с опытом более 5 лет.
                 </p>
@@ -445,7 +445,7 @@ const App: React.FC = () => {
                   <h3 className="font-decorative text-xl text-gold mb-3 group-hover:text-gold-glow transition-colors">
                     {practice.title}
                   </h3>
-                  <p className="text-gray-300 leading-relaxed text-sm">
+                  <p className="text-gray-200 leading-relaxed text-sm">
                     {practice.desc}
                   </p>
                 </div>
@@ -471,7 +471,7 @@ const App: React.FC = () => {
               >
                 <item.icon className="w-10 h-10 text-gold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
                 <h3 className="font-decorative text-lg text-gold-glow mb-3">{item.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{item.text}</p>
+                <p className="text-gray-300 text-sm leading-relaxed">{item.text}</p>
               </div>
             ))}
           </div>
@@ -492,7 +492,7 @@ const App: React.FC = () => {
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="absolute top-4 right-6 text-5xl text-gold/10 font-decorative leading-none">”</div>
-                <p className="text-gray-300 italic mb-4 relative z-10 leading-relaxed text-sm">
+                <p className="text-gray-200 italic mb-4 relative z-10 leading-relaxed text-sm">
                   "{review.text}"
                 </p>
                 <div className="flex flex-col gap-1">
@@ -520,7 +520,7 @@ const App: React.FC = () => {
             <h2 className="font-decorative text-2xl md:text-3xl text-center text-gold-gradient mb-6">
               Записаться на сеанс
             </h2>
-            <p className="text-center text-gray-400 mb-8 max-w-md mx-auto text-sm">
+            <p className="text-center text-gray-300 mb-8 max-w-md mx-auto text-sm">
               Оставьте заявку, и я свяжусь с вами в ближайшее время для уточнения деталей.
             </p>
 
@@ -585,7 +585,7 @@ const App: React.FC = () => {
             {/* Column 1: Brand */}
             <div className="flex flex-col items-center md:items-start reveal">
                <p className="font-decorative text-gold text-2xl mb-3">RUNARIS</p>
-               <p className="text-gray-500 text-xs leading-relaxed max-w-xs">Древние знания для современной жизни. Найди ответы в рунах и звездах.</p>
+               <p className="text-gray-400 text-xs leading-relaxed max-w-xs">Древние знания для современной жизни. Найди ответы в рунах и звездах.</p>
             </div>
             
             {/* Column 2: Vertical Nav */}
@@ -596,7 +596,7 @@ const App: React.FC = () => {
                   key={link.name} 
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-gray-400 hover:text-gold transition-all duration-300 font-serif hover:translate-x-2 text-sm"
+                  className="text-gray-300 hover:text-gold transition-all duration-300 font-serif hover:translate-x-2 text-sm"
                 >
                   {link.name}
                 </a>
@@ -606,11 +606,11 @@ const App: React.FC = () => {
             {/* Column 3: Socials/Contacts */}
             <div className="flex flex-col items-center md:items-start gap-3 reveal" style={{ transitionDelay: '200ms' }}>
               <h4 className="text-gold font-serif mb-2 uppercase tracking-widest text-xs opacity-60">Контакты</h4>
-              <a href="https://t.me/ppc_marketer" className="flex items-center gap-2 text-gray-400 hover:text-gold transition-colors group text-sm">
+              <a href="https://t.me/ppc_marketer" className="flex items-center gap-2 text-gray-300 hover:text-gold transition-colors group text-sm">
                 <TelegramIcon className="w-4 h-4 group-hover:text-gold transition-colors" />
-                <span>Telegram: @ppc_marketer</span>
+                <span>Telegram</span>
               </a>
-               <a href="https://wa.me/380505337014" className="flex items-center gap-2 text-gray-400 hover:text-gold transition-colors group text-sm">
+               <a href="https://wa.me/380505337014" className="flex items-center gap-2 text-gray-300 hover:text-gold transition-colors group text-sm">
                 <MessageCircle className="w-4 h-4 group-hover:text-gold transition-colors" />
                 <span>WhatsApp</span>
               </a>

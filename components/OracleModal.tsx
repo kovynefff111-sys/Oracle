@@ -55,7 +55,7 @@ const OracleModal: React.FC = () => {
             </button>
 
             <h3 className="font-decorative text-3xl text-gold-gradient text-center mb-1">Магический Оракул</h3>
-            <p className="text-center text-gray-400 text-sm mb-6 italic font-serif">
+            <p className="text-center text-gray-300 text-sm mb-6 italic font-serif">
               "Прошепчи свой вопрос цифровому эфиру..."
             </p>
 
@@ -65,7 +65,7 @@ const OracleModal: React.FC = () => {
                  <p className="font-decorative text-gold text-xl animate-pulse">
                    Звезды шепчут...
                  </p>
-                 <p className="text-gray-400 text-sm mt-2 max-w-xs">
+                 <p className="text-gray-300 text-sm mt-2 max-w-xs">
                    Связь с космосом устанавливается.
                  </p>
                </div>
