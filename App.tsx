@@ -159,10 +159,34 @@ const App: React.FC = () => {
     };
   }, [isLoading]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('submitted');
     
+    const submissionData = {
+      name,
+      contact,
+      service,
+      timestamp: new Date().toISOString()
+    };
+
+    // Send to Google Sheets if URL is configured
+    const sheetsUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
+    if (sheetsUrl) {
+      try {
+        await fetch(sheetsUrl, {
+          method: 'POST',
+          mode: 'no-cors', // Apps Script web apps often require no-cors for simple POSTs
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        });
+      } catch (error) {
+        console.error('Error sending to Google Sheets:', error);
+      }
+    }
+
     // Construct WhatsApp URL with Service
     const message = `Здравствуйте! Меня зовут ${name}. Меня интересует: ${service}. Хочу записаться на консультацию. Мой контакт: ${contact}`;
     const whatsappUrl = `https://wa.me/380505337014?text=${encodeURIComponent(message)}`;
